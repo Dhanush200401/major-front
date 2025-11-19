@@ -13,6 +13,7 @@ import avatarSprite from "./assets/avatars/avatars_sprites.png";
 import mapData from "./assets/tiles/Communication___room.json";
 import { IoAttach, IoSend } from "react-icons/io5";
 import { FiRefreshCw, FiEdit, FiX } from "react-icons/fi";
+import Cookies from "js-cookie"
 
 
 

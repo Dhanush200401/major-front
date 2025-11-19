@@ -2,6 +2,7 @@ import { Component } from "react";
 import "./index.css";
 import Avt from "./images/Avt1.png";
 import { io } from "socket.io-client";
+import Cookies from "js-cookie"
 
 class Home extends Component {
   state = {
