@@ -1,0 +1,137 @@
+/* Main container */
+.room-container {
+  display: flex;
+  flex-direction: column; /* stack header + main content */
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a1a2e, #16213e, #0f3460);
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* Header - full width */
+.roomtitle-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.brand-title {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-name {
+  font-size: 25px;
+  font-weight: 500;
+  color: white;
+}
+
+.profile-avatar {
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Main content split into left and right */
+.main-content {
+  flex: 1;
+  display: flex;
+   align-items: stretch;
+}
+
+/* Left side (forms) */
+.form-section {
+  flex: 0.6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 100px;
+}
+
+.form-block {
+  margin-bottom: 30px;
+}
+
+.form-title {
+  font-size: 30px;
+  margin-bottom: 15px;
+}
+
+.highlight {
+  color: #00e6ff;
+  font-size: 36px;
+}
+
+.create-room-id-field,.create-room-pass-field
+,.join-room-id-field,.join-room-pass-field{
+  display: block;
+  width: 50%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: none;
+  font-size: 26px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+  height: 8vh;
+}
+
+.create-room-id-field::placeholder,.create-room-pass-field::placeholder,
+.join-room-id-field::placeholder,.join-room-pass-field::placeholder {
+  color: #bbb;
+}
+
+.btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.2s ease;
+}
+
+.join-btn,
+.create-btn {
+  background: #00e68a;
+  color: black;
+
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+}
+
+/* Divider */
+.divider {
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+}
+
+/* Right side (illustration) */
+.Image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding: 0px;
+}
+
+.Image img {
+  height: 100%;
+  width: auto;
+  max-height: 600px;
+  border-radius: 12px;
+  object-fit: cover;
+}
