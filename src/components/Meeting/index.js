@@ -353,7 +353,7 @@ class Meeting extends Component {
   // ---------------------
   initUserAndSocket = async () => {
     try {
-      const profileRes = await fetch("http://localhost:5000/api/auth/me", {
+      const profileRes = await fetch("https://major-project-backend-u1ju.onrender.com/api/auth/me", {
         credentials: "include",
       });
       if (!profileRes.ok) throw new Error("Not logged in");
@@ -372,7 +372,7 @@ class Meeting extends Component {
         },
       }));
 
-      const usersRes = await fetch("http://localhost:5000/api/users", {
+      const usersRes = await fetch("https://major-project-backend-u1ju.onrender.com/api/users", {
         credentials: "include",
       });
       const allUsers = (await usersRes.json()) || [];
@@ -381,9 +381,12 @@ class Meeting extends Component {
       if (this._isMounted) this.setState({ offlineUsers });
 
       // create socket
-      this.socket = io("http://localhost:5000", {
+      this.socket = io("https://major-project-backend-u1ju.onrender.com", {
         withCredentials: true,
         transports: ["websocket"],
+        auth: {
+    token: Cookies.get("jwt_token")
+  }
       });
 
       // Attach file-shared listener early here too (only if not already attached)
@@ -1174,7 +1177,7 @@ class Meeting extends Component {
       fd.append("file", file);
       fd.append("roomId", this.roomId || "");
       // include credentials so server can read jwt cookie
-      const res = await fetch("http://localhost:5000/api/files/upload", {
+      const res = await fetch("https://major-project-backend-u1ju.onrender.com/api/files/upload", {
         method: "POST",
         body: fd,
         credentials: "include",
@@ -1188,8 +1191,8 @@ class Meeting extends Component {
       const fileUrl = data.fileUrl
         ? data.fileUrl.startsWith("http")
           ? data.fileUrl
-          : `http://localhost:5000${data.fileUrl}`
-        : `http://localhost:5000/api/files/${data.fileId}`;
+          : `https://major-project-backend-u1ju.onrender.com${data.fileUrl}`
+        : `https://major-project-backend-u1ju.onrender.com/api/files/${data.fileId}`;
       // replace pending message with final server file entry
       this.setState((prev) => ({
         chatMessages: prev.chatMessages.map((m) => {

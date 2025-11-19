@@ -65,7 +65,7 @@ class Login extends Component {
     if (this._isMounted) this.setState({ loading: true });
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("https://major-project-backend-u1ju.onrender.com/api/auth/login", {
         method: "POST",
         credentials: "include", // ✅ include cookies
         headers: { "Content-Type": "application/json" },
