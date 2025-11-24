@@ -56,34 +56,35 @@ class Login extends Component {
     }
   };
 
-  submitLoginForm = async (event) => {
-    event.preventDefault();
-    const { email, password } = this.state;
+submitLoginForm = async (event) => {
+  event.preventDefault();
+  const { email, password } = this.state;
 
-    if (this._isMounted) this.setState({ loading: true });
+  if (this._isMounted) this.setState({ loading: true });
 
-    try {
-      const response = await fetch("https://major-project-backend-u1ju.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include", // ✅ include cookies
-      });
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+      credentials: "include", // MUST include cookies for JWT
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-  this.onLoginSuccess();
-} else {
-        this.onLoginFailure(data.error_msg || "Login failed. Try again.");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      this.onLoginFailure("Something went wrong. Please try again.");
-    } finally {
-      if (this._isMounted) this.setState({ loading: false }); // ✅ safe setState
+    if (response.ok) {
+      this.onLoginSuccess();
+    } else {
+      this.onLoginFailure(data.error_msg || "Login failed. Try again.");
     }
-  };
+  } catch (err) {
+    console.error("Login error:", err);
+    this.onLoginFailure("Something went wrong. Please try again.");
+  } finally {
+    if (this._isMounted) this.setState({ loading: false });
+  }
+};
+
 
 
   render() {

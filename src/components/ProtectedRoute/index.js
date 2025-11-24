@@ -9,7 +9,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch("https://major-project-backend-u1ju.onrender.com/api/auth/me", {
+        const res = await fetch("http://localhost:5000/api/auth/me", {
           method: "GET",
           credentials: "include", // ✅ send cookies
         });

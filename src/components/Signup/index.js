@@ -60,7 +60,7 @@ submitSignupForm = async (event) => {
   this.setState({ loading: true });
 
   try {
-    const response = await fetch("https://major-project-backend-u1ju.onrender.com/api/auth/signup", {
+    const response = await fetch("http://localhost:5000/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

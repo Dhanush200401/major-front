@@ -19,7 +19,7 @@ class Home extends Component {
     this.getUserDetails();
 
     // ✅ Initialize socket (no need to manually send token, cookie is used)
-    this.socket = io("https://major-project-backend-u1ju.onrender.com", {
+    this.socket = io("http://localhost:5000", {
       withCredentials: true,
       transports: ["websocket"],
       auth: { token: Cookies.get("jwt_token") }
@@ -46,7 +46,7 @@ class Home extends Component {
   // ======================
   getUserDetails = async () => {
     try {
-      const response = await fetch("https://major-project-backend-u1ju.onrender.com/api/auth/me", {
+      const response = await fetch("http://localhost:5000/api/auth/me", {
         method: "GET",
         credentials: "include", // ✅ cookie travels
         headers: {
@@ -76,7 +76,7 @@ class Home extends Component {
     const { joinRoomId, joinPassword } = this.state;
 
     try {
-      const response = await fetch("https://major-project-backend-u1ju.onrender.com/api/rooms/join", {
+      const response = await fetch("http://localhost:5000/api/rooms/join", {
         method: "POST",
         credentials: "include", // ✅ send cookie
         headers: {
@@ -111,7 +111,7 @@ class Home extends Component {
     const { createRoomId, createPassword } = this.state;
 
     try {
-      const response = await fetch("https://major-project-backend-u1ju.onrender.com/api/rooms/create", {
+      const response = await fetch("http://localhost:5000/api/rooms/create", {
         method: "POST",
         credentials: "include", // ✅ send cookie
         headers: {
