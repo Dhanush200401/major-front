@@ -1782,9 +1782,7 @@ class Meeting extends Component {
         return;
       }
 
-      const fileUrl = payload.fileUrl
-      ? payload.fileUrl
-      : `${API}/api/files/${payload.fileId}`;
+       const fileUrl = `${API}/api/files/${payload.fileId}`;
 
       const fromName = payload.fromName || payload.fromId || "User";
 
