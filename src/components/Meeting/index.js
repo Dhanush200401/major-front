@@ -1722,7 +1722,7 @@ const INTERACTABLES_LAYER_NAME = "Interactables";
 const FILE_CHUNK_SIZE = 64 * 1024; // 64KB
 
 // use env variable (fallback to localhost for local dev)
-const API = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+const API = process.env.REACT_APP_BACKEND_URL;
 
 
 class Meeting extends Component {
@@ -1994,6 +1994,7 @@ class Meeting extends Component {
           avatar: userData.avatar || null
         }
       }));
+
 
       const usersRes = await fetch(`${API}/api/users`, { credentials: "include" });
       const allUsers = (await usersRes.json()) || [];
