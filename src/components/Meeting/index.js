@@ -1712,6 +1712,7 @@ import { FiMessageCircle } from "react-icons/fi";
 import { MdDirectionsWalk, MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { IoSearch, IoAttach, IoSend } from "react-icons/io5";
 import { FiX } from "react-icons/fi";
+import { MdExitToApp } from "react-icons/md";
 import map_img from "./assets/tiles/tileset.png";
 import avatarSprite from "./assets/avatars/avatars_sprites.png";
 import mapData from "./assets/tiles/Communication___room.json";
@@ -1756,7 +1757,8 @@ class Meeting extends Component {
     showSidebar: false,
     activeTab: "users",
     isSidebarCollapsed: false,
-    showVideo: false
+    showVideo: false,
+    showExitConfirm: false
   };
 
   allUsers = [];
@@ -1993,11 +1995,22 @@ class Meeting extends Component {
       }));
 
 
-      const usersRes = await fetch(`${API}/api/users`, { credentials: "include" });
-      const allUsers = (await usersRes.json()) || [];
-      this.allUsers = allUsers;
-      const offlineUsers = allUsers.filter(u => u._id !== userData._id);
-      if (this._isMounted) this.setState({ offlineUsers });
+      // const usersRes = await fetch(`${API}/api/users`, { credentials: "include" });
+      // const allUsers = (await usersRes.json()) || [];
+      // this.allUsers = allUsers;
+      // const offlineUsers = allUsers.filter(u => u._id !== userData._id);
+      // if (this._isMounted) this.setState({ offlineUsers });
+
+      const historyRes = await fetch(`${API}/api/rooms/${encodeURIComponent(this.roomId)}/history`, { 
+  credentials: "include" 
+});
+
+let roomHistoryUsers = [];
+if (historyRes.ok) {
+  roomHistoryUsers = await historyRes.json();
+}
+this.roomHistoryUsers = roomHistoryUsers;
+
 
       // Socket: include cookie or token if applicable
       this.socket = io(API, {
@@ -2225,12 +2238,24 @@ this.socket.on("chat", ({ from, message, zone }) => {
     };
   };
 
-  updateOfflineUsers = (currentOnline = []) => {
-    if (!this._isMounted) return;
-    const onlineIds = currentOnline.map(u => u._id);
-    const updatedOffline = (this.allUsers || []).filter(u => u._id !== this.state.userData?._id && !onlineIds.includes(u._id));
-    this.setState({ offlineUsers: updatedOffline });
-  };
+  // updateOfflineUsers = (currentOnline = []) => {
+  //   if (!this._isMounted) return;
+  //   const onlineIds = currentOnline.map(u => u._id);
+  //   const updatedOffline = (this.allUsers || []).filter(u => u._id !== this.state.userData?._id && !onlineIds.includes(u._id));
+  //   this.setState({ offlineUsers: updatedOffline });
+  // };
+
+updateOfflineUsers = (currentOnline = []) => {
+  if (!this._isMounted) return;
+
+  const onlineIds = new Set(currentOnline.map(u => u._id));
+  const allHistory = this.roomHistoryUsers || [];
+
+  const offline = allHistory.filter(u => !onlineIds.has(u._id));
+  this.setState({ offlineUsers: offline });
+};
+
+
 
   // --------------------------
   // WebRTC: Create PeerConnection
@@ -3069,6 +3094,45 @@ handleCandidate = async (fromId, candidate) => {
     });
   };
 
+
+    openExitConfirm = () => {
+    this.setState({ showExitConfirm: true });
+  };
+
+  closeExitConfirm = () => {
+    this.setState({ showExitConfirm: false });
+  };
+
+  // Called when user clicks "Leave" in the modal
+  leaveMeetingConfirmed = async () => {
+    try {
+      // 1) Tell server we are leaving the zone (optional but helps server notify immediately)
+      try { this.sendLeaveZone(); } catch (e) { /* ignore */ }
+
+      // 2) Cleanup WebRTC (stops tracks, closes peers, removes audio/video DOM)
+      try { this.cleanupWebRTC(); } catch (e) { console.warn("cleanupWebRTC err:", e); }
+
+      // 3) Disconnect socket to trigger server-side cleanup (server.io 'disconnecting' handles room removal)
+      try {
+        if (this.socket && this.socket.connected) {
+          // optional: emit a short 'leaving' event if you want server to know immediately
+          try { this.socket.emit("leavingRoom", { roomId: this.roomId }); } catch (e) {}
+          this.socket.disconnect(true);
+        }
+        this.socket = null;
+      } catch (e) {
+        console.warn("Socket disconnect error:", e);
+      }
+
+      // 4) Navigate home
+      window.location.href = "/"; // if you use react-router, you can replace with history.push("/")
+    } catch (err) {
+      console.error("leaveMeetingConfirmed failed:", err);
+      // still redirect to be safe
+      window.location.href = "/";
+    }
+  };
+
   // UI + rendering
   render() {
     const { onlineUsers, offlineUsers, isSidebarCollapsed, showChatPanel, chatMessages, activeTab, peers, userData, localStream, isAudioOn, isVideoOn } = this.state;
@@ -3081,6 +3145,7 @@ handleCandidate = async (fromId, candidate) => {
             <button onClick={this.toggleAudio} className="icon-btn"><IoMdMic style={{ color: isAudioOn ? "green" : "red" }} /></button>
             <button onClick={this.toggleVideo} className="icon-btn"><FaVideo style={{ color: isVideoOn ? "green" : "red" }} /></button>
             <button onClick={() => this.setState(prev => ({ showChatPanel: !prev.showChatPanel }))} className="icon-btn"><FiMessageCircle /></button>
+            <button onClick={this.openExitConfirm} className="icon-btn"><MdExitToApp style={{ color: "red" }} /></button>
           </div>
         </div>
 
@@ -3167,6 +3232,26 @@ handleCandidate = async (fromId, candidate) => {
             </div>
           )}
         </div>
+        {this.state.showExitConfirm && (
+  <div className="exit-modal-backdrop" onClick={this.closeExitConfirm}>
+    <div
+      className="exit-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="exit-modal-title"
+      onClick={(e) => e.stopPropagation()} // prevent backdrop click closing from triggering buttons accidentally
+    >
+      <h3 id="exit-modal-title">Leave meeting?</h3>
+      <p>Are you sure you want to leave the meeting? You will be disconnected from audio/video and go back to the home page.</p>
+
+      <div className="exit-modal-actions">
+        <button className="btn btn-cancel" onClick={this.closeExitConfirm}>Cancel</button>
+        <button className="btn btn-leave" onClick={this.leaveMeetingConfirmed}>Leave</button>
+      </div>
+    </div>
+  </div>
+)}
+
       </div>
     );
   }
