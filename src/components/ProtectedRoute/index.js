@@ -1,6 +1,7 @@
 // ProtectedRoute.jsx
 import React, { useEffect, useState } from "react";
 import { Route, Redirect } from "react-router-dom";
+const API = process.env.REACT_APP_BACKEND_URL;
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
   const [auth, setAuth] = useState(null); // null = loading, false = not auth, true = auth
