@@ -1721,6 +1721,10 @@ const ICE_CONFIG = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 const INTERACTABLES_LAYER_NAME = "Interactables";
 const FILE_CHUNK_SIZE = 64 * 1024; // 64KB
 
+// use env variable (fallback to localhost for local dev)
+const API = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
+
 class Meeting extends Component {
   // Non-state storages for peers and animations
   peerConnections = {}; // peerId -> RTCPeerConnection
@@ -1974,7 +1978,7 @@ class Meeting extends Component {
   // ---------------------
   initUserAndSocket = async () => {
     try {
-      const profileRes = await fetch("http://localhost:5000/api/auth/me", { credentials: "include" });
+      const profileRes = await fetch(`${API}/api/auth/me`, { credentials: "include" });
       if (!profileRes.ok) throw new Error("Not logged in");
       const userData = await profileRes.json();
       if (!this._isMounted) return;
@@ -1991,14 +1995,14 @@ class Meeting extends Component {
         }
       }));
 
-      const usersRes = await fetch("http://localhost:5000/api/users", { credentials: "include" });
+      const usersRes = await fetch(`${API}/api/users`, { credentials: "include" });
       const allUsers = (await usersRes.json()) || [];
       this.allUsers = allUsers;
       const offlineUsers = allUsers.filter(u => u._id !== userData._id);
       if (this._isMounted) this.setState({ offlineUsers });
 
       // Socket: include cookie or token if applicable
-      this.socket = io("http://localhost:5000", {
+      this.socket = io(API, {
         withCredentials: true,
         transports: ["websocket"],
         auth: { token: Cookies.get("jwt_token") } // optional, your server may read cookie directly
@@ -3006,7 +3010,7 @@ handleCandidate = async (fromId, candidate) => {
       fd.append("token", Cookies.get("jwt_token") || "");
       fd.append("zone", this.currentZone || "");
 
-      const res = await fetch("http://localhost:5000/api/files/upload", {
+      const res = await fetch(`${API}/api/files/upload`, {
         method: "POST",
         body: fd,
         credentials: "include"

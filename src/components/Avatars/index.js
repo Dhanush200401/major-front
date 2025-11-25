@@ -133,6 +133,7 @@ import A5 from "./images/A5.png";
 import A6 from "./images/A6.png";
 import A7 from "./images/A7.png";
 import A8 from "./images/A8.png";
+const API = process.env.REACT_APP_BACKEND_URL;
 
 class Avatar extends Component {
   constructor(props) {
@@ -166,7 +167,7 @@ class Avatar extends Component {
     if (this._isMounted) this.setState({ saving: true });
 
     try {
-      const response = await fetch("http://localhost:5000/api/avatar", {
+      const response = await fetch(`${API}/api/avatar`, {
         method: "PUT",
         credentials: "include", // ✅ ensures jwt_token cookie is sent
         headers: {

@@ -3,6 +3,7 @@ import A1 from "./images/A1.png";
 import A2 from "./images/A2.png";
 import A3 from "./images/A3.png";
 import "./index.css";
+const API = process.env.REACT_APP_BACKEND_URL;
 
 class Signup extends Component {
   state = {
@@ -60,7 +61,7 @@ submitSignupForm = async (event) => {
   this.setState({ loading: true });
 
   try {
-    const response = await fetch("http://localhost:5000/api/auth/signup", {
+    const response = await fetch(`${API}/api/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

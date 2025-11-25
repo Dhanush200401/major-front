@@ -3,6 +3,7 @@ import "./index.css";
 import Avt from "./images/Avt1.png";
 import { io } from "socket.io-client";
 import Cookies from "js-cookie"
+const API = process.env.REACT_APP_BACKEND_URL;
 
 class Home extends Component {
   state = {
@@ -111,7 +112,7 @@ class Home extends Component {
     const { createRoomId, createPassword } = this.state;
 
     try {
-      const response = await fetch("http://localhost:5000/api/rooms/create", {
+      const response = await fetch(`${API}/api/rooms/create`, {
         method: "POST",
         credentials: "include", // ✅ send cookie
         headers: {

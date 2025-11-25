@@ -4,6 +4,7 @@ import img2 from "./images/img2.png";
 import img1 from "./images/img1.png";
 import img3 from "./images/img3.png";
 import "./index.css";
+const API = process.env.REACT_APP_BACKEND_URL;
 
 class Login extends Component {
   state = {
@@ -63,7 +64,7 @@ submitLoginForm = async (event) => {
   if (this._isMounted) this.setState({ loading: true });
 
   try {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch(`${API}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
