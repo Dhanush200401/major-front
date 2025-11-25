@@ -1773,6 +1773,7 @@ class Meeting extends Component {
   handleFileShared = (payload) => {
     try {
       if (!payload) return;
+
       const myId = this.state.userData?._id;
 
       // avoid duplicate self-broadcasts
@@ -1782,10 +1783,8 @@ class Meeting extends Component {
       }
 
       const fileUrl = payload.fileUrl
-        ? payload.fileUrl.startsWith("http")
-          ? payload.fileUrl
-          : `${window.location.origin.replace(/:3000$/, ":5000")}${payload.fileUrl}`
-        : `${window.location.origin.replace(/:3000$/, ":5000")}/api/files/${payload.fileId}`;
+      ? payload.fileUrl
+      : `${API}/api/files/${payload.fileId}`;
 
       const fromName = payload.fromName || payload.fromId || "User";
 
